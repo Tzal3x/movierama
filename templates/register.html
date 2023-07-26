@@ -1,12 +1,58 @@
+<!DOCTYPE html>
 <html>
-   <body>
-      <form action="/users" method="POST">
-         <h3>~ Registration page ~</h3>
-         <h3>Enter username 👤</h3>
-         <p><input type='text' name='username'/></p>
-         <h3>Enter password 🔒</h3>
-         <p><input type='password' name='password'/></p>
-         <p><input type='submit' value='Register'/></p>
-      </form>
-   </body>
+<head>
+    <title>Login Page</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        form {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 400px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h3 {
+            margin: 5px 0;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            margin: 5px 0;
+            padding: 5px;
+        }
+
+        input[type="submit"] {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form action="/users" method="POST">
+            <h2>Register</h2>
+            <h3>👤 Enter username</h3>
+            <input type="text" name="username" required />
+            <h3>🔒 Enter password</h3>
+            <input type="password" name="password" required />
+            <input type="submit" value="Register" />
+        </form>
+    </div>
+</body>
 </html>
