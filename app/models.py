@@ -24,7 +24,9 @@ class Users(Base):
     password = Column(String, nullable=False)
 
     movies = relationship("Movies", back_populates="user")
-    likes = relationship("Likes", back_populates="user")
+    opinions = relationship("Opinions", 
+                            back_populates="user",
+                            cascade="all, delete")
 
 
 class Movies(Base):
@@ -40,7 +42,7 @@ class Movies(Base):
     user = relationship("Users", back_populates="movies",
                         cascade="all, delete")
     opinions = relationship("Opinions", 
-                            back_populates="opinions",
+                            back_populates="movie",
                             cascade="all, delete")
     likes = Column(Integer, server_default="0")
     hates = Column(Integer, server_default="0")
@@ -66,3 +68,7 @@ class Opinions(Base):
     opinion = Column(Boolean, 
                      nullable=False,
                      comment="Likes = 1, Hates = 0")
+    user = relationship("Users", back_populates="opinions",
+                        cascade="all, delete")
+    movie = relationship("Movies", back_populates="opinions",
+                        cascade="all, delete")
