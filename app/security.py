@@ -1,7 +1,6 @@
-from typing import Annotated, Any
+from typing import Any
 from datetime import datetime, timedelta
-from fastapi.security import OAuth2PasswordBearer
-from fastapi import status, HTTPException, Depends
+from fastapi import status, HTTPException, Depends, Cookie
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from jose import jwt, JWTError
@@ -11,7 +10,6 @@ from app.database import get_db
 
 
 security_configs = get_security_configs()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -26,14 +24,17 @@ def authenticate_user(db, username: str, password: str) -> Users | None:
     return user
 
 
-def authorize_user(token: Annotated[str, Depends(oauth2_scheme)],
-                   db: Session = Depends(get_db)) -> Users:
-
+def authorize_user(
+        token: str | None = Cookie(None),
+        db: Session = Depends(get_db)
+        ) -> Users | None:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    if not token:
+        return
     try:
         payload = decode_access_token(token)
         username: str = payload.get("sub")
