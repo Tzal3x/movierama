@@ -46,7 +46,11 @@ def authorize_user(
             )
         token_has_expired = datetime.utcnow() > expiration_unix_timestamp
         if token_has_expired:
-            raise credentials_exception
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token has expired, try to login.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
     except JWTError:
         raise credentials_exception

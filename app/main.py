@@ -4,7 +4,8 @@ from app.routers import (
     registration,
     authentication,
     users,
-    movies
+    movies,
+    opinions
 )
 from app.security import authorize_user
 
@@ -14,6 +15,7 @@ app.include_router(registration.router)
 app.include_router(users.router)
 app.include_router(authentication.router)
 app.include_router(movies.router)
+app.include_router(opinions.router)
 
 
 @app.get('/')
