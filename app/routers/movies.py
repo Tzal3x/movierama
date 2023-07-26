@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 templates = Jinja2Templates(directory='templates')
 router = APIRouter(
-    tags=["users"],
+    tags=["movies"],
     responses={404: {"description": "Not found"}}
 )
 

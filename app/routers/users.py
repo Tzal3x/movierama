@@ -36,9 +36,3 @@ def register_user(
         "You have successfully registered! 🎉 "\
         "You can now log in to Movierama. Enjoy!"
         }  # TODO: I could directly send them the login form
-    
-
-@router.get("/", status_code=status.HTTP_200_OK)
-def get_movies_of_a_user(username, sort_by):
-    pass  # TODO
-
