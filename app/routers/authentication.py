@@ -1,5 +1,5 @@
 from typing import Annotated
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse
 from fastapi import (APIRouter, status, Request,
                      HTTPException, Depends, Form, Response)
 from sqlalchemy.orm import Session
@@ -19,7 +19,7 @@ router = APIRouter(
 
 @router.get("/login", 
              response_class=HTMLResponse,
-             status_code=status.HTTP_201_CREATED)
+             status_code=status.HTTP_200_OK)
 async def login_form(request: Request):
     return templates.TemplateResponse('login.html', 
                                       {"request": request})
@@ -30,7 +30,6 @@ async def login_form(request: Request):
 def login(username: Annotated[str, Form()], 
           password:  Annotated[str, Form()],
           response: Response,
-          request: Request,
           db: Session = Depends(get_db)):
     """
     Creates a token and saves it in a cookie inside the browser. 

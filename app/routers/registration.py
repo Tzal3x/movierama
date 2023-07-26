@@ -16,7 +16,7 @@ router = APIRouter(
 
 @router.get("/", 
              response_class=HTMLResponse,
-             status_code=status.HTTP_201_CREATED)
+             status_code=status.HTTP_200_OK)
 async def register_form(request: Request):
     return templates.TemplateResponse('register.html', 
                                       {"request": request})
