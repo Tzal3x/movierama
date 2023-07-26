@@ -44,6 +44,7 @@ def upgrade() -> None:
     sa.Column('opinion', sa.Boolean(), nullable=False, comment='Likes = 1, Hates = 0'),
     sa.ForeignKeyConstraint(['movie_id'], ['movies.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
+    sa.UniqueConstraint('user_id', 'movie_id', name='vote_once_per_movie'),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###
