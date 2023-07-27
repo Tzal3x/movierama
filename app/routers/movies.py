@@ -100,7 +100,7 @@ def get_movies(loggedin_user: Annotated[Users, Depends(authorize_user)],
                 movie_dict["unvote_url"] = f"/opinions/undo?movie_id={movie.id}"
 
         processed_movies.append(movie_dict)
-
+    
     return templates.TemplateResponse('homepage.html', 
                                       {"request": request,
                                        "user_id": user_id,

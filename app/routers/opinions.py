@@ -41,7 +41,7 @@ def vote(
             )
 
 
-@router.delete("/undo", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/unvote", status_code=status.HTTP_204_NO_CONTENT)
 def unvote( 
     movie_id: int,
     user: Annotated[Users, Depends(authorize_user)],

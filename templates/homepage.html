@@ -192,15 +192,15 @@
                     </div>
                     <div class="movie-likes-hates">
                         {% if movie['likes'] == 0 and movie['hates'] == 0 and logged_in_usr%}
-                        <div>Be the first to vote this movie! <button onclick="likeMovie('{{ movie.id }}', true)" id="like-button">Like</button> | Hate </div>
+                        <div>Be the first to vote this movie! <button onclick="voteMovie('{{ movie.id }}', true)" id="like-button">Like</button> | <button onclick="voteMovie('{{ movie.id }}', false)" id="hate-button">Hate</button> </div>
                         {% else %}
                         <span class="likes-hates-left">likes: {{movie["likes"]}}</span> | <span> hates: {{movie["hates"]}}</span>
                         {% endif %}
                         {% if movie['has_voted'] %}
                             {% if movie['liked_or_hated'] %}
-                            <span class="likes-hates-right">You liked this movie | Unlike </span>
+                            <span class="likes-hates-right">You liked this movie | <button onclick="unVoteMovie('{{ movie.id }}')" id="unvote-button">Unlike</button> </span>
                             {% else %}
-                            <span class="likes-hates-right">You hated this movie | Unhate </span>
+                            <span class="likes-hates-right">You hated this movie | <button onclick="unVoteMovie('{{ movie.id }}')" id="unvote-button">Unhate</button> </span>
                             {% endif %}
                         {% endif %}
                     </div>
@@ -217,7 +217,7 @@
 
 </body></html>
 <script>
-    function likeMovie(movieId, opinion) {
+    function voteMovie(movieId, opinion) {
       const url = `/opinions?movie_id=${movieId}&opinion=${opinion}`;
       fetch(url, {
         method: 'POST',
@@ -240,4 +240,44 @@
         console.error('Error during POST request:', error);
       });
     }
-  </script>
+    function voteMovie(movieId, opinion) {
+      const url = `/opinions?movie_id=${movieId}&opinion=${opinion}`;
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Set the appropriate content type
+        },
+        body: JSON.stringify({}) // Add any data to send in the request body, if required
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+        console.log('POST request successful.');
+        location.reload()
+      })
+      .catch(error => {
+        console.error('Error during POST request:', error);
+      });
+    }
+    function unVoteMovie(movieId) {
+      const url = `/opinions/unvote?movie_id=${movieId}`;
+      fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json', // Set the appropriate content type
+        },
+        body: JSON.stringify({}) // Add any data to send in the request body, if required
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+        console.log('DELETE request successful.');
+        location.reload()
+      })
+      .catch(error => {
+        console.error('Error during DELETE request:', error);
+      });
+    }
+</script>
