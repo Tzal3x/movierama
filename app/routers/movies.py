@@ -1,7 +1,8 @@
-from typing import Annotated
+from typing import Annotated, Literal
 from fastapi import APIRouter, status, Request, Depends, Form, HTTPException
 from fastapi.templating import Jinja2Templates
-from app.models import Movies, Users
+from fastapi.responses import HTMLResponse
+from app.models import Movies, Users, Opinions
 from app.security import authorize_user
 from app.database import get_db
 from sqlalchemy import exc
@@ -15,17 +16,17 @@ router = APIRouter(
 )
 
 
-@router.get("/movie_form", status_code=status.HTTP_200_OK)
+@router.get("/new_movie", status_code=status.HTTP_200_OK)
 def add_movie_form(request: Request):
-    return templates.TemplateResponse('movie_form.html', 
+    return templates.TemplateResponse('new_movie_form.html', 
                                       {"request": request})
 
 
 @router.post("/movies", status_code=status.HTTP_201_CREATED)
-def add_movie_form(title: Annotated[str, Form()], 
-                   description:  Annotated[str, Form()],
-                   user: Annotated[Users, Depends(authorize_user)],
-                   db: Session = Depends(get_db)):
+def add_movie(title: Annotated[str, Form()], 
+             description:  Annotated[str, Form()],
+             user: Annotated[Users, Depends(authorize_user)],
+             db: Session = Depends(get_db)):
     if not user:
         return {'Sorry but you need to be logged in to add new movies.'}
     movie = Movies(
@@ -46,4 +47,62 @@ def add_movie_form(title: Annotated[str, Form()],
             )
     return {
         f"Movie '{title}' has now been added!"
-        }  # TODO: possible redirect
+        }  # TODO: possible redirect   
+
+
+@router.get("/movies", response_class=HTMLResponse)
+def get_movies(loggedin_user: Annotated[Users, Depends(authorize_user)],
+               request: Request,
+               user_id: int = None,
+               sort_by: Literal['date', 'likes', 'hates'] = "date",
+               db: Session = Depends(get_db)):
+    # Get all movies except if user_id is specified.
+    #  Then get only the movies specified by that user
+    movies = db.query(Movies)\
+               .filter(Movies.user_id == user_id 
+                       if user_id else True)
+    if sort_by == 'date':
+        movies = movies.order_by(Movies.date.desc())
+    elif sort_by == 'likes':
+        movies = movies.order_by(Movies.likes.desc())
+    elif sort_by == 'hates':
+        movies = movies.order_by(Movies.hates.desc())
+
+    # Process the entries of the movies depending on
+    # who the user is and what is his relationship with the movie.
+    # Was it posted by him? Has he voted for it? 
+    # This way I am then able to inject the corresponding info to
+    # the HTML template. 
+    movies = movies.all()
+    processed_movies = []
+    for movie in movies:
+        movie_dict = movie.__dict__
+        username = movie.user.username
+        movie_dict["user_url"] = f"/movies/?user_id={movie.user_id}"
+        movie_dict["username"] = username
+        if loggedin_user:
+            has_created = db.query(Movies)\
+                            .filter(Movies.user_id == loggedin_user.id,
+                                     Movies.id == movie.id)\
+                            .first()
+            if has_created:
+                movie_dict["you_posted_this"] = True
+            else:
+                movie_dict["you_posted_this"] = False
+
+            has_voted = db.query(Opinions)\
+                          .filter(Opinions.user_id == loggedin_user.id,
+                                  Opinions.movie_id == movie.id)\
+                          .first()          
+            movie_dict["has_voted"] = bool(has_voted) 
+            if has_voted:
+                movie_dict["liked_or_hated"] = has_voted.opinion
+                movie_dict["unvote_url"] = f"/opinions/undo?movie_id={movie.id}"
+
+        processed_movies.append(movie_dict)
+
+    return templates.TemplateResponse('homepage.html', 
+                                      {"request": request,
+                                       "user_id": user_id,
+                                       "logged_in_usr": loggedin_user,
+                                       "processed_movies": processed_movies})

@@ -1,0 +1,219 @@
+<html><head>
+    <title>Movie List</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .page-container {
+            max-width: 600px;
+            width: 100%;
+            padding: 10px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-left: -20px;
+            top: 0;
+        }
+
+        .header-title {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        .login-signup-container {
+            display: flex;
+            align-items: center;
+            margin-right: -40px;
+        }
+
+        .login-link {
+            text-decoration: none;
+            margin-right: 10px;
+        }
+
+        .signup-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .middle-container {
+            background-color: #f0f0f0;
+            margin-left: -20px;
+            margin-right: -20px;
+            padding: 10px;
+            display: flex;
+        }
+
+        .sort-by {
+            margin-right: 10px;
+        }
+
+        .sort-link {
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+
+        .movies-and-new-button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .movie-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 75%;
+            margin-top: 20px;
+        }
+
+        .movie-details {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        .movie-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .movie-posted-info {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .movie-description {
+            margin-bottom: 20px;
+        }
+
+        .movie-likes-hates {
+            font-size: 12px;
+            color: #777;
+            text-align: left;
+        }
+
+        .likes-hates-left{
+        display: block;
+        float:left;
+        /* width: 100px; */
+        }
+
+        .likes-hates-right{
+        display: block;
+        float:right;
+        /* width: 100px; */
+        }
+
+
+        .unhate-unlike {
+            font-size: 12px;
+            color: #777;
+            text-align: right;
+        }
+
+        .new-movie-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .new-movie-button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 30px;
+            height: 30px;
+            width: 25%;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="header-container">
+            <div class="header-title">🎥 MovieRama</div>
+            <div class="login-signup-container">
+                {% if logged_in_usr %}
+                <div>
+                    Welcome <a class="username">{{logged_in_usr.username}}</a>!
+                </div>
+
+                {% else %}
+                <a class="login-link" href="/login">Login</a>
+                <button onclick="window.location='/register';" class="signup-button">Sign Up</button>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="middle-container">
+            <span class="sort-by">Sort by:</span>
+            {% if user_id %}
+            <a class="sort-link" href="/movies/?sort_by=likes&user_id={{user_id}}">Likes</a>|
+            <a class="sort-link" href="/movies/?sort_by=hates&user_id={{user_id}}">Hates</a>|
+            <a class="sort-link" href="/movies/?sort_by=date&user_id={{user_id}}">Date</a>
+            {% else %}
+            <a class="sort-link" href="/movies/?sort_by=likes">Likes</a>|
+            <a class="sort-link" href="/movies/?sort_by=hates">Hates</a>|
+            <a class="sort-link" href="/movies/?sort_by=date">Date</a>
+            {% endif %}
+        </div>
+        
+        <div class="movies-and-new-button-container">
+            <div class="movie-container">
+                {%for movie in processed_movies%}
+                <div class="movie-details">
+                    <div class="movie-title">{{movie["title"]}}</div>
+                    <div class="movie-posted-info">
+                        Posted by <a href="{{movie['user_url']}}">{{movie["username"]}}</a> - at {{movie.date}}
+                    </div>
+                    <div class="movie-description">
+                        {{movie["description"]}}
+                    </div>
+                    <div class="movie-likes-hates">
+                        {% if movie['likes'] == 0 and movie['hates'] == 0 %}
+                        <div>Be the first to vote this movie! Like | Hate </div>
+                        {% else %}
+                        <span class="likes-hates-left">likes: {{movie["likes"]}}</span> | <span> hates: {{movie["hates"]}}</span>
+                        {% endif %}
+                        {% if movie['has_voted'] %}
+                            {% if movie['liked_or_hated'] %}
+                            <span class="likes-hates-right">You liked this movie | Unlike </span>
+                            {% else %}
+                            <span class="likes-hates-right">You hated this movie | Unhate </span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="new-movie-button-container">
+                {% if logged_in_usr %}
+                <button onclick="window.location='/new_movie';" class="new-movie-button">New Movie</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+</body></html>

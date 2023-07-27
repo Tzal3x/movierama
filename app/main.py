@@ -1,5 +1,5 @@
-from typing import Annotated
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, status
+from fastapi.responses import RedirectResponse
 from app.routers import (
     registration,
     authentication,
@@ -7,7 +7,6 @@ from app.routers import (
     movies,
     opinions
 )
-from app.security import authorize_user
 
 
 app = FastAPI()
@@ -19,13 +18,7 @@ app.include_router(opinions.router)
 
 
 @app.get('/')
-def root(user: Annotated[bool, Depends(authorize_user)]):
-    """Root path"""
-    if user:
-        # TODO - go to homepage - redirect
-        return {f"message": f"Welcome to MovieRama {user.username}! "
-            "Go to '/docs' for the API documentation."}
-    else:
-        # TODO - go to homepage of not logged in - redirect
-        return {"You are not logged in!"}
-    
+def root():
+    return RedirectResponse(
+        '/movies', 
+        status_code=status.HTTP_302_FOUND)
