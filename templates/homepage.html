@@ -191,8 +191,8 @@
                         {{movie["description"]}}
                     </div>
                     <div class="movie-likes-hates">
-                        {% if movie['likes'] == 0 and movie['hates'] == 0 %}
-                        <div>Be the first to vote this movie! Like | Hate </div>
+                        {% if movie['likes'] == 0 and movie['hates'] == 0 and logged_in_usr%}
+                        <div>Be the first to vote this movie! <button onclick="likeMovie('{{ movie.id }}', true)" id="like-button">Like</button> | Hate </div>
                         {% else %}
                         <span class="likes-hates-left">likes: {{movie["likes"]}}</span> | <span> hates: {{movie["hates"]}}</span>
                         {% endif %}
@@ -215,5 +215,29 @@
         </div>
     </div>
 
-
 </body></html>
+<script>
+    function likeMovie(movieId, opinion) {
+      const url = `/opinions?movie_id=${movieId}&opinion=${opinion}`;
+      fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // Set the appropriate content type
+          // Add other headers as needed, such as authentication tokens, etc.
+        },
+        body: JSON.stringify({}) // Add any data to send in the request body, if required
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+        // Handle the success case here, if needed
+        console.log('POST request successful.');
+        location.reload()
+      })
+      .catch(error => {
+        // Handle errors here, if needed
+        console.error('Error during POST request:', error);
+      });
+    }
+  </script>
