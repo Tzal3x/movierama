@@ -111,10 +111,16 @@
             color: #777;
             text-align: left;
         }
+        
+        .simple-likes-hates-container {
+        display: flex; /* Use flexbox */
+        align-items: center; /* Align items vertically center */
+        }
 
         .likes-hates-left{
         display: block;
         float:left;
+        margin-right: 3px;
         /* width: 100px; */
         }
 
@@ -123,7 +129,6 @@
         float:right;
         /* width: 100px; */
         }
-
 
         .unhate-unlike {
             font-size: 12px;
@@ -193,6 +198,12 @@
                     <div class="movie-likes-hates">
                         {% if movie['likes'] == 0 and movie['hates'] == 0 and logged_in_usr%}
                         <div>Be the first to vote this movie! <button onclick="voteMovie('{{ movie.id }}', true)" id="like-button">Like</button> | <button onclick="voteMovie('{{ movie.id }}', false)" id="hate-button">Hate</button> </div>
+                        {% elif logged_in_usr and not movie["has_voted"]%}
+                        <div class="simple-likes-hates-container">
+                        <span class="likes-hates-left">likes: {{movie["likes"]}}</span> | <span> hates: {{movie["hates"]}}</span> 
+                        <button onclick="voteMovie('{{ movie.id }}', true)" id="like-button">Like</button>
+                        <button onclick="voteMovie('{{ movie.id }}', false)" id="hate-button">Hate</button>
+                        </div>
                         {% else %}
                         <span class="likes-hates-left">likes: {{movie["likes"]}}</span> | <span> hates: {{movie["hates"]}}</span>
                         {% endif %}
