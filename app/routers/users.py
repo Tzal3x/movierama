@@ -39,5 +39,7 @@ def register_user(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Registration failed: Username already exists.")
-    return templates.TemplateResponse('registration_success.html', 
+    response_template = templates.TemplateResponse('registration_success.html', 
                                       {"request": request})
+    response_template.status_code = status.HTTP_201_CREATED
+    return response_template

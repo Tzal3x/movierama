@@ -50,7 +50,7 @@ def login(username: Annotated[str, Form()],
         key="token", 
         value=token.access_token,
         expires=int(environ["ACCESS_TOKEN_EXPIRE_MINUTES"])*60)
-    
+    template_response.status_code = status.HTTP_201_CREATED
     return template_response
 
 
