@@ -2,7 +2,7 @@
 Yet​ ​another social​ ​sharing​ ​platform​ ​where​ ​users​ ​can​ ​share​ ​their​ ​favorite​ ​movies.
 
 ## Running instance 🦈
-Click [here](http://164.92.162.226:8000/movies) to access a running instance of the app!
+Click [here](http://143.244.206.167:8000/movies) to access a running instance of the app!
 
 The project has been deployed with a droplet at [DigitalOcean](https://www.digitalocean.com/).
 At the moment of this writting they offer free 200$ of credit for a duration of 2 months. 
