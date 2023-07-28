@@ -12,6 +12,23 @@ services:
       POSTGRES_DB: ${DB_NAME}
     ports:
       - "5432:5432"
-  
+  web:
+    depends_on:
+      - postgres
+    build: .
+    environment:
+      - DB_SERVICE=${DB_SERVICE}
+      - DB_HOST=${DB_HOST}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - TOKEN_CREATION_SECRET_KEY=${TOKEN_CREATION_SECRET_KEY}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+      
+      - HASH_ALGORITHM=${HASH_ALGORITHM}
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --reload --host 0.0.0.0"
+    ports:
+      - "8000:8000"
+
 volumes:
   db_data:
