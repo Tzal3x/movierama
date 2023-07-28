@@ -1,13 +1,17 @@
 from typing import Annotated
 from sqlalchemy.orm import Session
 from sqlalchemy import exc
-from fastapi import APIRouter, status, Form, Depends
+from fastapi import APIRouter, status, Form, Depends, Request
+from fastapi.responses import HTMLResponse
 from fastapi.exceptions import HTTPException
 from app.database import get_db
 from app.security import get_password_hash
 from app.models import Users
+from fastapi.templating import Jinja2Templates
 
 
+
+templates = Jinja2Templates(directory='templates')
 router = APIRouter(
     prefix="/users",
     tags=["users"],
@@ -15,8 +19,11 @@ router = APIRouter(
 )
 
 
-@router.post("/", status_code=status.HTTP_201_CREATED)
+@router.post("/", 
+             status_code=status.HTTP_201_CREATED,
+             response_class=HTMLResponse)
 def register_user(
+    request: Request,
     username: Annotated[str, Form()], 
     password:  Annotated[str, Form()],
     db: Session = Depends(get_db),
@@ -32,7 +39,5 @@ def register_user(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Registration failed: Username already exists.")
-    return {
-        "You have successfully registered! 🎉 "\
-        "You can now log in to Movierama. Enjoy!"
-        }  # TODO: I could directly send them the login form
+    return templates.TemplateResponse('registration_success.html', 
+                                      {"request": request})
