@@ -25,6 +25,7 @@ def add_movie_form(request: Request):
 @router.post("/movies", status_code=status.HTTP_201_CREATED)
 def add_movie(title: Annotated[str, Form()], 
              description:  Annotated[str, Form()],
+             request: Request,
              user: Annotated[Users, Depends(authorize_user)],
              db: Session = Depends(get_db)):
     if not user:
@@ -48,10 +49,12 @@ def add_movie(title: Annotated[str, Form()],
             detail="This movie title already exists in Movierama. "
             "Are you sure this is not a repost? 🤔"
             )
-    return {
-        "success": f"Movie '{title}' has now been added!",
-        "movie_id": f"{movie.id}"
-        }
+    response_template = templates.TemplateResponse('new_movie_success.html', 
+                                      {"request": request,
+                                       "success": f"Movie '{title}' has now been added!",
+                                       "movie_id": f"{movie.id}"})
+    return response_template
+
 
 @router.get("/movies", response_class=HTMLResponse)
 def get_movies(loggedin_user: Annotated[Users, Depends(authorize_user)],

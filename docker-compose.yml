@@ -13,9 +13,10 @@ services:
     ports:
       - "5432:5432"
   web:
+    container_name: movierama
     depends_on:
       - postgres
-    build: .
+    image: "tzalex/movierama"
     environment:
       - DB_SERVICE=${DB_SERVICE}
       - DB_HOST=${DB_HOST}

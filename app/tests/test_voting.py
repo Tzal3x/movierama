@@ -17,7 +17,7 @@ def test_vote_a_movie(loggedin_user, loggedin_user_2):
     add_movie_response = client.post('/movies', 
                                     data=movie, 
                                     cookies=loggedin_user['cookie'])
-    movie_id = json.loads(add_movie_response.content)['movie_id']
+    movie_id = add_movie_response.context['movie_id']
     # User 2 votes it.
     vote_response =  client.post(
         f'/opinions/?movie_id={movie_id}&opinion=1', # 1 == like
@@ -36,7 +36,7 @@ def test_cant_vote_your_own(loggedin_user):
     add_movie_response = client.post('/movies', 
                                     data=movie, 
                                     cookies=loggedin_user['cookie'])
-    movie_id = json.loads(add_movie_response.content)['movie_id']
+    movie_id = add_movie_response.context['movie_id']
     # User 1 tries to vote for it.
     vote_response =  client.post(
         f'/opinions/?movie_id={movie_id}&opinion=1', # 1 == like
@@ -56,7 +56,7 @@ def test_cant_multiple_vote(loggedin_user, loggedin_user_2):
     add_movie_response = client.post('/movies', 
                                     data=movie, 
                                     cookies=loggedin_user['cookie'])
-    movie_id = json.loads(add_movie_response.content)['movie_id']
+    movie_id = add_movie_response.context['movie_id']
     # User 2 votes it.
     client.post(
             f'/opinions/?movie_id={movie_id}&opinion=1', # 1 == like
