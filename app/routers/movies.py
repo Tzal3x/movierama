@@ -49,9 +49,9 @@ def add_movie(title: Annotated[str, Form()],
             "Are you sure this is not a repost? 🤔"
             )
     return {
-        f"Movie '{title}' has now been added!"
-        }  # TODO: possible redirect   
-
+        "success": f"Movie '{title}' has now been added!",
+        "movie_id": f"{movie.id}"
+        }
 
 @router.get("/movies", response_class=HTMLResponse)
 def get_movies(loggedin_user: Annotated[Users, Depends(authorize_user)],

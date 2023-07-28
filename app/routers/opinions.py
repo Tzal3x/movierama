@@ -35,7 +35,7 @@ def vote(
         db.add(opinion)
         db.commit()
         db.refresh(opinion)
-    except exc.IntegrityError as e:
+    except (exc.IntegrityError, exc.InternalError) as e:
         db.rollback()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -69,5 +69,5 @@ def unvote(
         db.commit()
     except exc.SQLAlchemyError:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                            detail="Could not delete user.")
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail="Could not un-vote.")
