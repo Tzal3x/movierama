@@ -1,7 +1,11 @@
 # 🎥 MovieRama
 Yet​ ​another social​ ​sharing​ ​platform​ ​where​ ​users​ ​can​ ​share​ ​their​ ​favorite​ ​movies.
 
-Click [here](http://159.223.17.183:8000/movies) to access a running instance of the app!
+## Running instance 🦈
+Click [here](http://164.92.162.226:8000/movies) to access a running instance of the app!
+
+The project has been deployed with a droplet at [DigitalOcean](https://www.digitalocean.com/).
+At the moment of this writting they offer free 200$ of credit for a duration of 2 months. 
 
 ## Installation
 Create a `.env` file in the project's root directory (i.e. `/movierama/.env`)
@@ -35,3 +39,9 @@ The API documentation can be found on https://localhost:8000/docs or https://loc
 Run the unit tests with 
 
 `$ docker exec -it movierama sh -c "pytest"`
+
+## Homepage Screenshots
+
+![image](https://github.com/Tzal3x/movierama/assets/33265837/516fa29f-04fd-4d5e-b3b0-3e42fc9f23ab)
+
+![image](https://github.com/Tzal3x/movierama/assets/33265837/4c5d9bca-9e2d-480b-ae3a-d6bed855024f)
