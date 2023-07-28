@@ -145,12 +145,26 @@
             cursor: pointer;
         }
 
-        .new-movie-button-container {
+        .logout-button {
+            padding: 8px 16px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #e71632;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .logout-and-new-movie-button-container {
             display: flex;
             justify-content: flex-end;
-            margin-top: 30px;
             height: 30px;
-            width: 25%;
+            width: 20%;
+            flex-direction: column;
+            margin-top: 50px;
+            margin-right: -40;
+            padding-top: 20px;
+            padding-right: 20px;
         }
     </style>
 </head>
@@ -218,9 +232,10 @@
                 </div>
                 {% endfor %}
             </div>
-            <div class="new-movie-button-container">
+            <div class="logout-and-new-movie-button-container">
                 {% if logged_in_usr %}
                 <button onclick="window.location='/new_movie';" class="new-movie-button">New Movie</button>
+                <button onclick="logout();" class="logout-button">Logout</button>
                 {% endif %}
             </div>
         </div>
@@ -234,7 +249,6 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', // Set the appropriate content type
-          // Add other headers as needed, such as authentication tokens, etc.
         },
         body: JSON.stringify({}) // Add any data to send in the request body, if required
       })
@@ -242,35 +256,14 @@
         if (!response.ok) {
           throw new Error('Network response was not ok.');
         }
-        // Handle the success case here, if needed
-        console.log('POST request successful.');
+        console.log('Movie vote successful.');
         location.reload()
       })
       .catch(error => {
-        // Handle errors here, if needed
-        console.error('Error during POST request:', error);
+        console.error('Error voting movie:', error);
       });
     }
-    function voteMovie(movieId, opinion) {
-      const url = `/opinions?movie_id=${movieId}&opinion=${opinion}`;
-      fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', // Set the appropriate content type
-        },
-        body: JSON.stringify({}) // Add any data to send in the request body, if required
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok.');
-        }
-        console.log('POST request successful.');
-        location.reload()
-      })
-      .catch(error => {
-        console.error('Error during POST request:', error);
-      });
-    }
+
     function unVoteMovie(movieId) {
       const url = `/opinions/unvote?movie_id=${movieId}`;
       fetch(url, {
@@ -284,11 +277,32 @@
         if (!response.ok) {
           throw new Error('Network response was not ok.');
         }
-        console.log('DELETE request successful.');
+        console.log('Unvote successful.');
         location.reload()
       })
       .catch(error => {
-        console.error('Error during DELETE request:', error);
+        console.error('Failed to unvote movie:', error);
+      });
+    }
+
+    function logout() {
+      const url = `/logout`;
+      fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json', // Set the appropriate content type
+        },
+        body: JSON.stringify({}) // Add any data to send in the request body, if required
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+        console.log('Successfully logged out');
+        location.reload()
+      })
+      .catch(error => {
+        console.error('Failed to logout:', error);
       });
     }
 </script>
