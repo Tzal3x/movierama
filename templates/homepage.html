@@ -1,6 +1,12 @@
 <html><head>
     <title>Movie List</title>
     <style>
+        .homepage-ref {
+            text-decoration: none; /* Remove the underline */
+            color: black; /* Set the text color to black (or any other color you prefer) */
+            font-weight: bold; /* Optionally, make the text bold */
+            cursor: default; /* Optionally, remove the cursor pointer */
+        }
         body {
             display: flex;
             justify-content: center;
@@ -171,7 +177,7 @@
 <body>
     <div class="page-container">
         <div class="header-container">
-            <div class="header-title">🎥 MovieRama</div>
+            <div class="header-title"><a class="homepage-ref" href="/movies">🎥 MovieRama</a></div>
             <div class="login-signup-container">
                 {% if logged_in_usr %}
                 <div>
