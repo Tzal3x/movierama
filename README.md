@@ -1,6 +1,8 @@
 # 🎥 MovieRama
 Yet​ ​another social​ ​sharing​ ​platform​ ​where​ ​users​ ​can​ ​share​ ​their​ ​favorite​ ​movies.
 
+Click [here](http://159.223.17.183:8000/movies) to access a running instance of the app!
+
 ## Installation
 Create a `.env` file in the project's root directory (i.e. `/movierama/.env`)
 with the following contents:
