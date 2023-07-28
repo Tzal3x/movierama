@@ -21,7 +21,10 @@ def vote(
     user: Annotated[Users, Depends(authorize_user)],
     db: Session = Depends(get_db)):
     if not user:
-        return {'Sorry but you need to be logged in to vote for a movie.'}
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Sorry but you need to be logged in order to vote for a movie.'
+            )
     opinion = Opinions(
         movie_id=movie_id,
         user_id=user.id,
@@ -53,6 +56,11 @@ def unvote(
     your vote. This happens because a user can only
     vote once for a movie.
     """
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='You have to be logged in to un-vote a movie.'
+            )
     try:
         db.query(Opinions)\
           .filter(user.id == Opinions.user_id, 

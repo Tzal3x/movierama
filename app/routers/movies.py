@@ -28,7 +28,10 @@ def add_movie(title: Annotated[str, Form()],
              user: Annotated[Users, Depends(authorize_user)],
              db: Session = Depends(get_db)):
     if not user:
-        return {'Sorry but you need to be logged in to add new movies.'}
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Sorry but you need to be logged in to add new movies.'
+            )
     movie = Movies(
         title=title,
         description=description,

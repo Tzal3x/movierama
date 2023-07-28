@@ -31,7 +31,6 @@ async def login_form(request: Request):
              response_class=HTMLResponse)
 def login(username: Annotated[str, Form()], 
           password:  Annotated[str, Form()],
-          response: Response,
           request: Request,
           db: Session = Depends(get_db)):
     """
