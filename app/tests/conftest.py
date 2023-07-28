@@ -5,7 +5,7 @@ from app.database import SessionLocal
 from ..main import app
 from app.models import Users, Movies
 from app.tests.cases.user_cases import test_users
-
+from app.security import create_access_token
 
 client = TestClient(app)
 
@@ -51,3 +51,10 @@ def user():
     client.post('/users', data=user)
     yield user
     teardown_user(user["username"])
+
+
+@pytest.fixture
+def loggedin_user(user):
+    token = create_access_token(data={"sub": user["username"]})
+    user["cookie"] = [("token", token)]
+    yield user
