@@ -40,8 +40,11 @@ Run the unit tests with
 
 `$ docker exec -it movierama sh -c "pytest"`
 
-## Homepage Screenshots
+## Screenshots
 
-![image](https://github.com/Tzal3x/movierama/assets/33265837/516fa29f-04fd-4d5e-b3b0-3e42fc9f23ab)
+![image](https://github.com/Tzal3x/movierama/assets/33265837/1c725566-2963-47ec-a5d8-66418be25bf8)
 
-![image](https://github.com/Tzal3x/movierama/assets/33265837/4c5d9bca-9e2d-480b-ae3a-d6bed855024f)
+![image](https://github.com/Tzal3x/movierama/assets/33265837/25d3170d-30fc-47f9-a74e-7e88aa5f635e)
+
+
+
