@@ -222,21 +222,30 @@
                     <div class="movie-likes-hates">
                         {% if movie['likes'] == 0 and movie['hates'] == 0 and logged_in_usr and not movie["you_posted_this"]%}
                         <div>Be the first to vote this movie! <button onclick="voteMovie('{{ movie.id }}', true)" id="like-button">Like</button> | <button onclick="voteMovie('{{ movie.id }}', false)" id="hate-button">Hate</button> </div>
+                        
                         {% elif not movie["has_voted"] and logged_in_usr and not movie["you_posted_this"]%}
                         <div class="simple-likes-hates-container">
                         <span class="likes-hates-left">likes: {{movie["likes"]}}</span> | <span> hates: {{movie["hates"]}}</span> 
                         <button onclick="voteMovie('{{ movie.id }}', true)" id="like-button">Like</button>
                         <button onclick="voteMovie('{{ movie.id }}', false)" id="hate-button">Hate</button>
                         </div>
+                        {% elif logged_in_usr and not movie["you_posted_this"]%}
+                            {% if movie['liked_or_hated'] %}
+                            <span class="likes-hates-left">likes: {{movie["likes"]}}</span>
+                            <button onclick="voteOppposite('{{ movie.id }}', false)" id="hate-button">hates: {{movie["hates"]}}</button>
+                            {% else %}
+                            <button onclick="voteOppposite('{{ movie.id }}', true)" id="like-button">likes: {{movie["likes"]}}</button>
+                            <span> hates: {{movie["hates"]}}</span>
+                            {% endif %}
                         {% else %}
                         <span class="likes-hates-left">likes: {{movie["likes"]}}</span> | <span> hates: {{movie["hates"]}}</span>
                         {% endif %}
                         {% if movie['has_voted'] %}
-                            {% if movie['liked_or_hated'] %}
-                            <span class="likes-hates-right">You liked this movie | <button onclick="unVoteMovie('{{ movie.id }}')" id="unvote-button">Unlike</button> </span>
-                            {% else %}
-                            <span class="likes-hates-right">You hated this movie | <button onclick="unVoteMovie('{{ movie.id }}')" id="unvote-button">Unhate</button> </span>
-                            {% endif %}
+                        {% if movie['liked_or_hated'] %}
+                        <span class="likes-hates-right">You liked this movie | <button onclick="unVoteMovie('{{ movie.id }}')" id="unvote-button">Unlike</button> </span>
+                        {% else %}
+                        <span class="likes-hates-right">You hated this movie | <button onclick="unVoteMovie('{{ movie.id }}')" id="unvote-button">Unhate</button> </span>
+                        {% endif %}
                         {% endif %}
                     </div>
                 </div>
@@ -296,6 +305,11 @@
       .catch(error => {
         console.error('Failed to unvote movie:', error);
       });
+    }
+
+    function voteOppposite(movieId, opinion) {
+        unVoteMovie(movieId);
+        voteMovie(movieId, opinion);
     }
 
     function logout() {
