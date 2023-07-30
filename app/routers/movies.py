@@ -1,5 +1,5 @@
 from typing import Annotated, Literal
-from fastapi import APIRouter, status, Request, Depends, Form, HTTPException
+from fastapi import APIRouter, status, Request, Depends, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 from app.models import Movies, Users, Opinions
@@ -68,27 +68,52 @@ def add_movie(title: Annotated[str, Form()],
 def get_movies(loggedin_user: Annotated[Users, Depends(authorize_user)],
                request: Request,
                user_id: int = None,
+               offset: int = 0,  # used for pagination
                sort_by: Literal['date', 'likes', 'hates'] = "date",
                db: Session = Depends(get_db)):
-    # Get all movies except if user_id is specified.
-    #  Then get only the movies specified by that user
-    movies = db.query(Movies)\
-               .filter(Movies.user_id == user_id 
-                       if user_id else True)
+    """
+    This is the endpoint used as the homepage. 
+    """
+    OFFSET_STEP = 5
+    query = db.query(Movies)\
+                     .filter(Movies.user_id == user_id 
+                             if user_id else True)
     if sort_by == 'date':
-        movies = movies.order_by(Movies.date.desc())
+        query = query.order_by(Movies.date.desc())
     elif sort_by == 'likes':
-        movies = movies.order_by(Movies.likes.desc())
+        query = query.order_by(Movies.likes.desc())
     elif sort_by == 'hates':
-        movies = movies.order_by(Movies.hates.desc())
+        query = query.order_by(Movies.hates.desc())
+    movies = query.offset(offset).limit(5).all()
+    
+    processed_movies = add_template_fields(movies, loggedin_user, db)
+    if len(movies) < OFFSET_STEP:
+        next_button_url = None
+    else:
+        current_url = f"/movies?sort_by=date"
+        current_url += f"&user_id={user_id}" if user_id else ""
+        next_button_url = current_url + f"&offset={offset + OFFSET_STEP}"
 
-    # Process the entries of the movies depending on
-    # who the user is and what is his relationship with the movie.
-    # Was it posted by him? Has he voted for it? 
-    # This way I am then able to inject the corresponding info to
-    # the HTML template. 
-    movies = movies.all()
-    processed_movies = []
+    return templates.TemplateResponse('homepage.html', 
+                                      {"request": request,
+                                       "user_id": user_id,
+                                       "logged_in_usr": loggedin_user,
+                                       "processed_movies": processed_movies,
+                                       "next_button_url": next_button_url,
+                                       })
+
+
+def add_template_fields(movies: list[Movies], 
+                        loggedin_user: Users | None, 
+                        db: Session) -> list[dict]:
+    """
+    Adds additional fields to each movie in order 
+    to extract them in the Jinja2 homepate.html template.
+    Such fields include the user relationship with the movie.
+    
+    i.e. Was it posted by him? Has he voted for it? etc
+    """
+    result = []
     for movie in movies:
         movie_dict = movie.__dict__
         username = movie.user.username
@@ -113,10 +138,5 @@ def get_movies(loggedin_user: Annotated[Users, Depends(authorize_user)],
                 movie_dict["liked_or_hated"] = has_voted.opinion
                 movie_dict["unvote_url"] = f"/opinions/undo?movie_id={movie.id}"
 
-        processed_movies.append(movie_dict)
-    
-    return templates.TemplateResponse('homepage.html', 
-                                      {"request": request,
-                                       "user_id": user_id,
-                                       "logged_in_usr": loggedin_user,
-                                       "processed_movies": processed_movies})
+        result.append(movie_dict)
+    return result

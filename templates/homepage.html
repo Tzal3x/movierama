@@ -58,6 +58,10 @@
             cursor: pointer;
         }
 
+        .next-button {
+            background-color: #f3db8c;
+        }
+
         .middle-container {
             background-color: #f0f0f0;
             margin-left: -20px;
@@ -245,6 +249,9 @@
                 {% endif %}
             </div>
         </div>
+        {% if next_button_url %}
+        <button onclick="window.location='{{next_button_url}}';" class="next-button">Next</button>
+        {% endif %}
     </div>
 
 </body></html>
