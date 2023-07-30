@@ -29,10 +29,13 @@ def add_movie(title: Annotated[str, Form()],
              user: Annotated[Users, Depends(authorize_user)],
              db: Session = Depends(get_db)):
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail='Sorry but you need to be logged in to add new movies.'
-            )
+        return templates.TemplateResponse(
+            'error_go_back.html', 
+            {"request": request,
+            "error_message": "You are not logged in!",
+            "error_details": 'Sorry but you need to be logged in to add new movies.',
+            "go_back_url": "'/new_movie'"
+            }, status_code=status.HTTP_401_UNAUTHORIZED)
     movie = Movies(
         title=title,
         description=description,
@@ -44,15 +47,20 @@ def add_movie(title: Annotated[str, Form()],
         db.refresh(movie)
     except exc.IntegrityError as e:
         db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="This movie title already exists in Movierama. "
-            "Are you sure this is not a repost? 🤔"
-            )
+        return templates.TemplateResponse(
+            'error_go_back.html', 
+            {"request": request,
+            "error_message": "Movie title already exists!",
+            "error_details": "Are you sure this is not a repost? 🤔",
+            "go_back_url": "'/new_movie'"
+            }, status_code=status.HTTP_409_CONFLICT)
+        
     response_template = templates.TemplateResponse('new_movie_success.html', 
                                       {"request": request,
+                                       "title": title,
                                        "success": f"Movie '{title}' has now been added!",
-                                       "movie_id": f"{movie.id}"})
+                                       "movie_id": f"{movie.id}"},
+                                       status_code=status.HTTP_201_CREATED)
     return response_template
 
 

@@ -36,9 +36,14 @@ def register_user(
         db.refresh(db_user)
     except exc.IntegrityError as e:
         db.rollback()
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="Registration failed: Username already exists.")
+        return templates.TemplateResponse(
+            'error_go_back.html', 
+            {"request": request,
+            "error_message": "🙅‍♂️ Registration failed! ",
+            "error_details": 'This username is already taken.',
+            "go_back_url": "'/register'"
+            }, status_code=status.HTTP_409_CONFLICT)
+        
     response_template = templates.TemplateResponse('registration_success.html', 
                                       {"request": request})
     response_template.status_code = status.HTTP_201_CREATED

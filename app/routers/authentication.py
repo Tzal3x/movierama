@@ -38,8 +38,13 @@ def login(username: Annotated[str, Form()],
     """
     user = authenticate_user(db, username, password)
     if _authentication_failed := not user:
-        raise HTTPException(status_code=400, 
-                            detail="Incorrect username or password")
+        return templates.TemplateResponse(
+            'error_go_back.html', 
+            {"request": request,
+            "error_message": "✋👮 Authentication Failed!",
+            "error_details": "Incorrect username or password.",
+            "go_back_url": "'/login'"
+            }, status_code=status.HTTP_401_UNAUTHORIZED)
     token = Token(access_token=create_access_token(data={'sub': user.username}))
     # On "expires" cookie param bellow I convert the seconds to minutes since
     #  the expires == how many seconds after should it expire.
