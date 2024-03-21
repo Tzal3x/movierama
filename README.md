@@ -18,14 +18,14 @@ HASH_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
 TOKEN_CREATION_SECRET_KEY=<use a token creation key>
 ```
-**Warning!** The field values are examples. You should use different values for safety purposes.
+⚠️ **Warning!** The field values are examples. You should use different values for safety purposes.
 
 Then, to run the app just type on the cmd
 
 `docker compose up -d`
 
 ## Access
-Access the app on: https://localhost:8000/
+Access the app on: `https://localhost:8000/`
 
 The API documentation can be found on https://localhost:8000/docs or https://localhost:8000/redoc.
 
