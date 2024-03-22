@@ -1,80 +1,109 @@
 # 🎥 MovieRama
 
-Yet​ ​another social​ ​sharing​ ​platform​ ​where​ ​users​ ​can​ ​share​ ​their​ ​favorite​ ​movies.
+MovieRama is a social sharing platform where users can share and discover their favorite movies. Users can engage with the community by viewing shared movies, contributing their own favorites, and discussing cinematic gems.
 
-## Installation
+## 💾 Installation
 
-Create a `.env` file in the project's root directory (i.e. `/movierama/.env`)
-with the following contents:
+### Environment Setup
 
-```
+Firstly, create a `.env` file in the project's root directory (for example, in `/movierama/.env`) with the necessary environment variables. Replace placeholder values with your own secure credentials:
+
+```env
 DB_SERVICE=postgresql
 DB_USERNAME=postgres
-DB_PASSWORD=<A_VERY_STRONG_PASSWORD>
+DB_PASSWORD=<YOUR_STRONG_PASSWORD_HERE>
 DB_NAME=movierama
 DB_PORT=5432
-
 DB_HOST=postgres:5432
-
 HASH_ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=1440
-TOKEN_CREATION_SECRET_KEY=<use a token creation key>
+TOKEN_CREATION_SECRET_KEY=<YOUR_TOKEN_CREATION_KEY_HERE>
 ```
 
-⚠️ **Warning!** The field values are examples. You should use different values for safety purposes.
+⚠️ **Warning:** Do not use the example values provided above in a production environment. Always choose secure and unique values for credentials.
 
-Then, to run the app just type on the cmd
+### Running the Application
 
-`docker compose up -d`
+To launch MovieRama, open your command line interface (CLI) and run the following Docker command:
 
-## Access
-
-Access the app on: `https://localhost:8000/`
-
-The API documentation can be found on https://localhost:8000/docs or https://localhost:8000/redoc.
-
-## Testing
-
-Run the unit tests with
-
-`$ docker exec -it movierama sh -c "pytest"`
-
-## Screenshots
-
-![Screenshot from 2023-07-31 01-31-48](https://github.com/Tzal3x/movierama/assets/33265837/ed01d0f6-2d62-464b-88f3-a0045a8123a2)
-
-![Screenshot from 2023-07-31 01-32-35](https://github.com/Tzal3x/movierama/assets/33265837/023d2583-b6b8-435c-b9df-2b3f108f1d57)
-
-## Local development
-
-To run the app locally, you need to have Python 3.8+ installed.
-
-Create a virtual environment:
-
+```sh
+docker-compose up -d
 ```
+
+This command will start the application in detached mode.
+
+## 🌐 Accessing the Application
+
+After starting the application, you can access MovieRama at the following URL:
+
+- **Web App:** [https://localhost:8000/](https://localhost:8000/)
+
+For API documentation, visit one of these URLs:
+
+- **Swagger UI Docs:** [https://localhost:8000/docs](https://localhost:8000/docs)
+- **ReDoc Docs:** [https://localhost:8000/redoc](https://localhost:8000/redoc)
+
+## 🧪 Testing
+
+To execute the unit tests, run the following command:
+
+```sh
+docker exec -it movierama sh -c "pytest"
+```
+
+## 📸 Screenshots
+
+Here are some screenshots of MovieRama in action:
+
+![Screenshot 1](https://github.com/Tzal3x/movierama/assets/screenshot_1.png)
+![Screenshot 2](https://github.com/Tzal3x/movierama/assets/screenshot_2.png)
+
+_Note: Please make sure the URLs to the screenshots are valid and publicly accessible._
+
+## ⌨️ Local Development
+
+If you prefer to run the application locally, ensure you have Python 3.8 or higher installed.
+
+### Setup a Virtual Environment
+
+Create and activate a virtual environment:
+
+```sh
 python -m venv venv
+source venv/bin/activate  # On Unix-based systems
+venv\Scripts\activate     # On Windows
 ```
 
-Install the dependencies:
+### Install Dependencies
 
-```
+Install the required Python packages:
+
+```sh
 pip install -r requirements.txt
 ```
 
-Setup the database:
+### Start the Database
 
-```
-docker compose up -d postgres
+Initialize the PostgreSQL database using Docker:
+
+```sh
+docker-compose up -d postgres
 ```
 
-Run the migrations:
+### Apply Database Migrations
 
-```
+Run Alembic to apply database migrations:
+
+```sh
 alembic upgrade head
 ```
 
-Run the app:
+### Launch the Application
 
-```
+Start the ASGI server with:
+
+```sh
 uvicorn app.main:app --reload
 ```
+
+The `--reload` flag enables hot reloading for development purposes.
